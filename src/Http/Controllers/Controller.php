@@ -21,6 +21,17 @@ abstract class Controller extends BaseController
         AuthorizesRequests,
         AlertsMessages;
 
+
+    public function __construct(Request $request)
+    {
+        $imageResize = \App::make('\App\Helpers\ImageResize');
+
+        \View::share([
+            'imageResize' => $imageResize,
+        ]);
+
+    }
+
     public function getSlug(Request $request)
     {
         if (isset($this->slug)) {
@@ -164,6 +175,7 @@ abstract class Controller extends BaseController
 
             /********** MULTIPLE IMAGES TYPE **********/
             case 'multiple_images':
+
                 if ($files = $request->file($row->field)) {
                     /**
                      * upload files.
@@ -171,10 +183,21 @@ abstract class Controller extends BaseController
                     $filesPath = [];
                     foreach ($files as $key => $file) {
                         $filename = Str::random(20);
-                        $path = $slug.'/'.date('F').date('Y').'/';
-                        array_push($filesPath, $path.$filename.'.'.$file->getClientOriginalExtension());
+                        //$path = $slug.'/'.date('F').date('Y').'/';
+						$path = $slug.'/';
+						array_push($filesPath, $path.$filename.'.'.$file->getClientOriginalExtension());
                         $filePath = $path.$filename.'.'.$file->getClientOriginalExtension();
 
+                        $options = json_decode($row->details);
+						if (isset($options->resize) && isset($options->resize->width) && isset($options->resize->height)) {
+							$resize_width = $options->resize->width;
+							$resize_height = $options->resize->height;
+						} else {
+							$resize_width = 1800;
+							$resize_height = null;
+						}
+						
+						
                         $image = Image::make($file)->resize($resize_width, $resize_height,
                             function (Constraint $constraint) {
                                 $constraint->aspectRatio();
@@ -217,7 +240,6 @@ abstract class Controller extends BaseController
                             }
                         }
                     }
-
                     return json_encode($filesPath);
                 }
                 break;
@@ -260,11 +282,13 @@ abstract class Controller extends BaseController
                     $file = $request->file($row->field);
                     $filename = Str::random(20);
 
-                    $path = $slug.'/'.date('F').date('Y').'/';
+                    //$path = $slug.'/'.date('F').date('Y').'/';
+					$path = $slug.'/';
                     $fullPath = $path.$filename.'.'.$file->getClientOriginalExtension();
 
                     $options = json_decode($row->details);
 
+					
                     if (isset($options->resize) && isset($options->resize->width) && isset($options->resize->height)) {
                         $resize_width = $options->resize->width;
                         $resize_height = $options->resize->height;

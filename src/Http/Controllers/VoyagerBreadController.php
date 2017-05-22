@@ -2,6 +2,7 @@
 
 namespace TCG\Voyager\Http\Controllers;
 
+use App\Seo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use TCG\Voyager\Facades\Voyager;
@@ -34,22 +35,28 @@ class VoyagerBreadController extends Controller
         Voyager::canOrFail('browse_'.$dataType->name);
 
         $getter = $dataType->server_side ? 'paginate' : 'get';
-
+        $search = '';
         // Next Get or Paginate the actual content from the MODEL that corresponds to the slug DataType
         if (strlen($dataType->model_name) != 0) {
             $model = app($dataType->model_name);
 
             $relationships = $this->getRelationships($dataType);
 
-            if ($model->timestamps) {
-                $dataTypeContent = call_user_func([$model->with($relationships)->latest(), $getter]);
-            } else {
-                $dataTypeContent = call_user_func([
-                    $model->with($relationships)->orderBy($model->getKeyName(), 'DESC'),
-                    $getter,
-                ]);
+            $dataModel = $model->with($relationships);
+            if($request->search){
+                $search =$request->search;
+                foreach ($dataType->browseRows as $bRow){
+                    if($bRow->type != 'timestamp'){
+                        $dataModel->orWhere($bRow->field, 'like', '%'.$request->search.'%');
+                    }
+                }
             }
-
+            if ($model->timestamps) {
+                $dataTypeContent = call_user_func([$dataModel->latest(), $getter]);
+            } else {
+                $dataTypeContent = call_user_func([$dataModel->orderBy('id', 'DESC'), $getter]);
+            }
+            //dd($model->with($relationships)->latest());
             //Replace relationships' keys for labels and create READ links if a slug is provided.
             $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType);
         } else {
@@ -57,7 +64,7 @@ class VoyagerBreadController extends Controller
             $dataTypeContent = call_user_func([DB::table($dataType->name), $getter]);
             $model = false;
         }
-
+        //dd($dataTypeContent);
         // Check if BREAD is Translatable
         $isModelTranslatable = is_bread_translatable($model);
 
@@ -67,7 +74,8 @@ class VoyagerBreadController extends Controller
             $view = "voyager::$slug.browse";
         }
 
-        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+
+        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'))->with(['search' => $search]);
     }
 
     //***************************************
@@ -150,7 +158,7 @@ class VoyagerBreadController extends Controller
         if (view()->exists("voyager::$slug.edit-add")) {
             $view = "voyager::$slug.edit-add";
         }
-
+        //dd($dataTypeContent);
         return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
     }
 
@@ -174,12 +182,22 @@ class VoyagerBreadController extends Controller
         if (!$request->ajax()) {
             $data = call_user_func([$dataType->model_name, 'findOrFail'], $id);
 
+            $seo = Seo::firstOrNew(array(
+                'table_name' => $dataType->name,
+                'item_id' => $id
+                ));
+            $seo->title = $request->get('seo_title', '');
+            $seo->description = $request->get('seo_description', '');
+            $seo->keywords = $request->get('seo_keywords', '');
+            $seo->save();
+
+
             $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
 
             return redirect()
             ->route("voyager.{$dataType->slug}.edit", ['id' => $id])
             ->with([
-                'message'    => "Successfully Updated {$dataType->display_name_singular}",
+                'message'    => "Запись успешно обновлена {$dataType->display_name_singular}",
                 'alert-type' => 'success',
                 ]);
         }
@@ -241,12 +259,13 @@ class VoyagerBreadController extends Controller
         }
 
         if (!$request->ajax()) {
+
             $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
 
             return redirect()
                 ->route("voyager.{$dataType->slug}.edit", ['id' => $data->id])
                 ->with([
-                        'message'    => "Successfully Added New {$dataType->display_name_singular}",
+                        'message'    => "Запись успешно добавлена {$dataType->display_name_singular}",
                         'alert-type' => 'success',
                     ]);
         }
@@ -303,11 +322,11 @@ class VoyagerBreadController extends Controller
 
         $data = $data->destroy($id)
             ? [
-                'message'    => "Successfully Deleted {$dataType->display_name_singular}",
+                'message'    => "Запись удалена {$dataType->display_name_singular}",
                 'alert-type' => 'success',
             ]
             : [
-                'message'    => "Sorry it appears there was a problem deleting this {$dataType->display_name_singular}",
+                'message'    => "Проблема при удалении {$dataType->display_name_singular}",
                 'alert-type' => 'error',
             ];
 

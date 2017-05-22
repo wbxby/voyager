@@ -105,3 +105,46 @@ php artisan voyager:admin your@email.com --create
 ```
 
 And you will be prompted for the users name and password.
+
+**Сделано: 22.05.17**
+**views:**
+- Удален блок c google ads со страницы: resources/index.blade.php
+- Частичный перевод: resources/views/login.blade.php
+- Частичный перевод: resources/views/profile.blade.php
+
+- Частичный перевод: resources/views/bread/browse.blade.php
+- Добавлен поиск: resources/views/bread/browse.blade.php
+- Добавлен по умолчанию ресайз: resources/views/bread/browse.blade.php, поэтому надо ставить хелпером ресайзер
+
+- Частичный перевод: resources/views/bread/edit-add.blade.php
+- ДОбавлена форма для сео: resources/views/bread/edit-add.blade.php, поэтому нужно создать таблицу и модель
+
+- Частичный перевод: resources/views/bread/read.blade.php
+
+- Частичный перевод: resources/views/dashboard/nav.blade.php
+- Частичный перевод: resources/views/dashboard/sidebar.blade.php
+
+**src**
+
+- Загрузка Ресайзера: src/Http/Controller/Controller.php
+- Убрал даты из пути загрузки картинок: src/Http/Controller/Controller.php
+- Исправил косяк с загрузкой multiply image: src/Http/Controller/Controller.php
+
+- Добавление поиска в index: src/Http/Controller/VoyagerBreadController.php
+- Добавление SEO в update: src/Http/Controller/VoyagerBreadController.php
+- Частичный перевод: src/Http/Controller/VoyagerBreadController.php
+
+**assets**
+- Частивный перевод: resources/views/bread/jquery.dataTables.min.js
+
+
+
+**Todo**:
+- Сделать перевод в файле resources/index.blade.php
+- Сделать перевод в файле resources/views/settings/index.blade.php
+- Можно вынести поиск в другое место: resources/views/bread/browse.blade.php
+- Включить ресайзер или по умолчанию в бандл или отдельным бандлом: resources/views/bread/browse.blade.php
+- Добавить автосоздание таблицы для сео resources/views/bread/edit-add.blade.php
+- Вынести в отдельный паршал блок для сео resources/views/bread/edit-add.blade.php
+- Перевод: src/Http/Controller/VoyagerMediaController.php
+- Переделать: src/Http/Wiggets, можно взять с libefolle_2

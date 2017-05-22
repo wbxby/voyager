@@ -11,10 +11,10 @@
 
             <ol class="breadcrumb hidden-xs">
                 @if(count(Request::segments()) == 1)
-                    <li class="active"><i class="voyager-boat"></i> Dashboard</li>
+                    <li class="active"><i class="voyager-boat"></i> Главная</li>
                 @else
                     <li class="active">
-                        <a href="{{ route('voyager.dashboard')}}"><i class="voyager-boat"></i> Dashboard</a>
+                        <a href="{{ route('voyager.dashboard')}}"><i class="voyager-boat"></i> Главная</a>
                     </li>
                 @endif
                 <?php $breadcrumb_url = ''; ?>
@@ -48,6 +48,7 @@
                         </div>
                     </li>
                     <li class="divider"></li>
+
                     <?php $nav_items = config('voyager.dashboard.navbar_items'); ?>
                     @if(is_array($nav_items) && !empty($nav_items))
                     @foreach($nav_items as $name => $item)

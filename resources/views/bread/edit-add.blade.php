@@ -12,7 +12,7 @@
 
 @section('page_header')
     <h1 class="page-title">
-        <i class="{{ $dataType->icon }}"></i> @if(isset($dataTypeContent->id)){{ 'Edit' }}@else{{ 'New' }}@endif {{ $dataType->display_name_singular }}
+        <i class="{{ $dataType->icon }}"></i> @if(isset($dataTypeContent->id)){{ 'Редактировать' }}@else{{ 'Создать' }}@endif {{ $dataType->display_name_singular }}
     </h1>
     @include('voyager::multilingual.language-selector')
 @stop
@@ -25,7 +25,7 @@
                 <div class="panel panel-bordered">
 
                     <div class="panel-heading">
-                        <h3 class="panel-title">@if(isset($dataTypeContent->id)){{ 'Edit' }}@else{{ 'Add New' }}@endif {{ $dataType->display_name_singular }}</h3>
+                        <h3 class="panel-title">@if(isset($dataTypeContent->id)){{ 'Редактировать' }}@else{{ 'Добавить новый' }}@endif {{ $dataType->display_name_singular }}</h3>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
@@ -74,9 +74,32 @@
 
                         </div><!-- panel-body -->
 
-                        <div class="panel-footer">
-                            <button type="submit" class="btn btn-primary save">Save</button>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Сео:</h3>
                         </div>
+                        <?php
+                            $seo = \App\Seo::where('table_name', $dataType->name)->where('item_id', $dataTypeContent->id)->first();
+                        ?>
+
+                        <div class="form-group ">
+                            <label for="name">Title</label>
+                            <input type="text" class="form-control" name="seo_title" placeholder="Тайтл"  value="@if(isset($seo->title) and $seo->title){{$seo->title}}@endif">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Description</label>
+                            <input type="text" class="form-control" name="seo_description" placeholder="Описание" value="@if(isset($seo->description) and $seo->description){{$seo->description}}@endif">
+                        </div>
+
+                        <div class="form-group ">
+                            <label for="name">Keywords</label>
+                            <input type="text" class="form-control" name="seo_keywords" placeholder="Кл.слова" value="@if(isset($seo->keywords) and $seo->keywords){{$seo->keywords}}@endif">
+                        </div>
+
+                        <div class="panel-footer">
+                            <button type="submit" class="btn btn-primary save">Сохранить</button>
+                        </div>
+
                     </form>
 
                     <iframe id="form_target" name="form_target" style="display:none"></iframe>
@@ -100,16 +123,16 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">&times;</button>
-                    <h4 class="modal-title"><i class="voyager-warning"></i> Are You Sure</h4>
+                    <h4 class="modal-title"><i class="voyager-warning"></i> Да, конечно</h4>
                 </div>
 
                 <div class="modal-body">
-                    <h4>Are you sure you want to delete '<span class="confirm_delete_name"></span>'</h4>
+                    <h4>Вы уверены что хотите удалить '<span class="confirm_delete_name"></span>'</h4>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirm_delete">Yes, Delete it!
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-danger" id="confirm_delete">Да, конечно
                     </button>
                 </div>
             </div>
@@ -125,15 +148,6 @@
 
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
-            
-            //Init datepicker for date fields if data-datepicker attribute defined
-            //or if browser does not handle date inputs
-            $('.form-group input[type=date]').each(function (idx, elt) {
-                if (elt.type != 'date' || elt.hasAttribute('data-datepicker')) {
-                    elt.type = 'text';
-                    $(elt).datetimepicker($(elt).data('datepicker'));
-                }
-            });
 
             @if ($isModelTranslatable)
                 $('.side-body').multilingual({"editing": true});

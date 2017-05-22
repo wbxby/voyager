@@ -54,7 +54,7 @@
 
             <div class="login-container animated fadeInRightBig">
 
-                <h2>Sign In Below:</h2>
+                <h2>Введите в поля:</h2>
 
                 <form action="{{ route('voyager.login') }}" method="POST">
                 {{ csrf_field() }}
@@ -69,12 +69,12 @@
                   <input type="password" name="password" required>
                   <span class="highlight"></span>
                   <span class="bar"></span>
-                  <label><i class="glyphicon glyphicon-lock"></i><span class="span-input"> Password</span></label>
+                  <label><i class="glyphicon glyphicon-lock"></i><span class="span-input"> Пароль</span></label>
                 </div>
 
                 <button type="submit" class="btn btn-block login-button">
-                    <span class="signingin hidden"><span class="glyphicon glyphicon-refresh"></span> Loggin in...</span>
-                    <span class="signin">Login</span>
+                    <span class="signingin hidden"><span class="glyphicon glyphicon-refresh"></span>Вход в ...</span>
+                    <span class="signin">Вход</span>
                 </button>
                
               </form>
