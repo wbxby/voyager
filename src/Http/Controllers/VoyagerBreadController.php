@@ -120,7 +120,9 @@ class VoyagerBreadController extends Controller
             $view = "voyager::$slug.read";
         }
 
-        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+        $dataSeo = DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->get();
+
+        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'dataSeo'));
     }
 
     //***************************************
@@ -159,7 +161,12 @@ class VoyagerBreadController extends Controller
             $view = "voyager::$slug.edit-add";
         }
         //dd($dataTypeContent);
-        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+
+        $dataSeoDescription = DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->value('description');
+        $dataSeoKeywords = DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->value('keywords');
+        $dataSeoTitle = DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->value('title');
+
+        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'dataSeoDescription', 'dataSeoKeywords', 'dataSeoTitle'));
     }
 
     // POST BR(E)AD
@@ -182,23 +189,33 @@ class VoyagerBreadController extends Controller
         if (!$request->ajax()) {
             $data = call_user_func([$dataType->model_name, 'findOrFail'], $id);
 
-            $seo = Seo::firstOrNew(array(
-                'table_name' => $dataType->name,
-                'item_id' => $id
-                ));
-            $seo->title = $request->get('seo_title', '');
-            $seo->description = $request->get('seo_description', '');
-            $seo->keywords = $request->get('seo_keywords', '');
-            $seo->save();
-
 
             $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
 
+            $seoRecord = DB::table('seo')->where('table', '=', $dataType->name)->where('item_id', '=', $id)->first();
+            if (!$seoRecord){
+                DB::table('seo')->insert(
+                    ['table' => $dataType->name,
+                        'item_id' => $id,
+                        'title' => $request->metaTitle,
+                        'description' => $request->metaDescription,
+                        'keywords' => $request->metaKeywords]
+                );
+            } else {
+                DB::table('seo')->where('item_id', '=', $id)->update(
+                    ['table' => $dataType->name,
+                        'item_id' => $id,
+                        'title' => $request->metaTitle,
+                        'description' => $request->metaDescription,
+                        'keywords' => $request->metaKeywords]
+                );
+            }
+
             return redirect()
-            ->route("voyager.{$dataType->slug}.edit", ['id' => $id])
-            ->with([
-                'message'    => "Запись успешно обновлена {$dataType->display_name_singular}",
-                'alert-type' => 'success',
+                ->route("voyager.{$dataType->slug}.edit", ['id' => $id])
+                ->with([
+                    'message'    => "Запись успешно обновлена {$dataType->display_name_singular}",
+                    'alert-type' => 'success',
                 ]);
         }
     }
@@ -226,8 +243,8 @@ class VoyagerBreadController extends Controller
         Voyager::canOrFail('add_'.$dataType->name);
 
         $dataTypeContent = (strlen($dataType->model_name) != 0)
-                            ? new $dataType->model_name()
-                            : false;
+            ? new $dataType->model_name()
+            : false;
 
         // Check if BREAD is Translatable
         $isModelTranslatable = is_bread_translatable($dataTypeContent);
@@ -238,7 +255,11 @@ class VoyagerBreadController extends Controller
             $view = "voyager::$slug.edit-add";
         }
 
-        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+        $dataSeoDescription = DB::table('seo')->where('table', $dataType->name)->where('item_id', $dataTypeContent->id)->value('description');
+        $dataSeoKeywords = DB::table('seo')->where('table', $dataType->name)->where('item_id', $dataTypeContent->id)->value('keywords');
+        $dataSeoTitle = DB::table('seo')->where('table', $dataType->name)->where('item_id', $dataTypeContent->id)->value('title');
+
+        return view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'dataSeoDescription', 'dataSeoKeywords', 'dataSeoTitle'));
     }
 
     // POST BRE(A)D
@@ -262,12 +283,20 @@ class VoyagerBreadController extends Controller
 
             $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
 
+            DB::table('seo')->insert(
+                ['table' => $dataType->name,
+                    'item_id' => $data->id,
+                    'title' => $request->metaTitle,
+                    'description' => $request->metaDescription,
+                    'keywords' => $request->metaKeywords]
+            );
+
             return redirect()
                 ->route("voyager.{$dataType->slug}.edit", ['id' => $data->id])
                 ->with([
-                        'message'    => "Запись успешно добавлена {$dataType->display_name_singular}",
-                        'alert-type' => 'success',
-                    ]);
+                    'message'    => "Запись успешно добавлена {$dataType->display_name_singular}",
+                    'alert-type' => 'success',
+                ]);
         }
     }
 
@@ -329,6 +358,8 @@ class VoyagerBreadController extends Controller
                 'message'    => "Проблема при удалении {$dataType->display_name_singular}",
                 'alert-type' => 'error',
             ];
+
+        DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->delete();
 
         return redirect()->route("voyager.{$dataType->slug}.index")->with($data);
     }

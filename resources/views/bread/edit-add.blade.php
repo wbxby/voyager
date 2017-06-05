@@ -30,15 +30,15 @@
                     <!-- /.box-header -->
                     <!-- form start -->
                     <form role="form"
-                            class="form-edit-add"
-                            action="@if(isset($dataTypeContent->id)){{ route('voyager.'.$dataType->slug.'.update', $dataTypeContent->id) }}@else{{ route('voyager.'.$dataType->slug.'.store') }}@endif"
-                            method="POST" enctype="multipart/form-data">
+                          class="form-edit-add"
+                          action="@if(isset($dataTypeContent->id)){{ route('voyager.'.$dataType->slug.'.update', $dataTypeContent->id) }}@else{{ route('voyager.'.$dataType->slug.'.store') }}@endif"
+                          method="POST" enctype="multipart/form-data">
                         <!-- PUT Method if we are editing -->
-                        @if(isset($dataTypeContent->id))
-                            {{ method_field("PUT") }}
-                        @endif
+                    @if(isset($dataTypeContent->id))
+                        {{ method_field("PUT") }}
+                    @endif
 
-                        <!-- CSRF TOKEN -->
+                    <!-- CSRF TOKEN -->
                         {{ csrf_field() }}
 
                         <div class="panel-body">
@@ -53,7 +53,7 @@
                                 </div>
                             @endif
 
-                            <!-- If we are editing -->
+                        <!-- If we are editing -->
                             @if(isset($dataTypeContent->id))
                                 <?php $dataTypeRows = $dataType->editRows; ?>
                             @else
@@ -74,26 +74,24 @@
 
                         </div><!-- panel-body -->
 
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Сео:</h3>
-                        </div>
-                        <?php
-                            $seo = \App\Seo::where('table_name', $dataType->name)->where('item_id', $dataTypeContent->id)->first();
-                        ?>
-
-                        <div class="form-group ">
-                            <label for="name">Title</label>
-                            <input type="text" class="form-control" name="seo_title" placeholder="Тайтл"  value="@if(isset($seo->title) and $seo->title){{$seo->title}}@endif">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="name">Description</label>
-                            <input type="text" class="form-control" name="seo_description" placeholder="Описание" value="@if(isset($seo->description) and $seo->description){{$seo->description}}@endif">
-                        </div>
-
-                        <div class="form-group ">
-                            <label for="name">Keywords</label>
-                            <input type="text" class="form-control" name="seo_keywords" placeholder="Кл.слова" value="@if(isset($seo->keywords) and $seo->keywords){{$seo->keywords}}@endif">
+                        <div class="panel panel-bordered panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="icon wb-search"></i> SEO Контент</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label for="name">SEO Description</label>
+                                    <textarea class="form-control" name="metaDescription">{{ $dataSeoDescription or ''}}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">SEO Keywords</label>
+                                    <textarea class="form-control" name="metaKeywords">{{ $dataSeoKeywords or ''}}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">SEO Title</label>
+                                    <input type="text" class="form-control" name="metaTitle" placeholder="SEO Title" value="{{ $dataSeoTitle or ''}}">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="panel-footer">
@@ -104,9 +102,9 @@
 
                     <iframe id="form_target" name="form_target" style="display:none"></iframe>
                     <form id="my_form" action="{{ route('voyager.upload') }}" target="form_target" method="post"
-                            enctype="multipart/form-data" style="width:0;height:0;overflow:hidden">
+                          enctype="multipart/form-data" style="width:0;height:0;overflow:hidden">
                         <input name="image" id="upload_file" type="file"
-                                 onchange="$('#my_form').submit();this.value='';">
+                               onchange="$('#my_form').submit();this.value='';">
                         <input type="hidden" name="type_slug" id="type_slug" value="{{ $dataType->slug }}">
                         {{ csrf_field() }}
                     </form>
@@ -175,9 +173,9 @@
             $('#confirm_delete').on('click', function(){
                 $.post('{{ route('voyager.media.remove') }}', params, function (response) {
                     if ( response
-                        && response.data
-                        && response.data.status
-                        && response.data.status == 200 ) {
+                            && response.data
+                            && response.data.status
+                            && response.data.status == 200 ) {
 
                         toastr.success(response.data.message);
                         $image.parent().fadeOut(300, function() { $(this).remove(); })
