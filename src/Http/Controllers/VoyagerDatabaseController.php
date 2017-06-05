@@ -79,8 +79,8 @@ class VoyagerDatabaseController extends Controller
             }
 
             return redirect()
-               ->route('voyager.database.edit', $table->name)
-               ->with($this->alertSuccess("Successfully created {$table->name} table"));
+                ->route('voyager.database.edit', $table->name)
+                ->with($this->alertSuccess("Successfully created {$table->name} table"));
         } catch (Exception $e) {
             return back()->with($this->alertException($e))->withInput();
         }
@@ -123,8 +123,8 @@ class VoyagerDatabaseController extends Controller
         }
 
         return redirect()
-               ->route('voyager.database.edit', $table['name'])
-               ->with($this->alertSuccess("Successfully updated {$table['name']} table"));
+            ->route('voyager.database.edit', $table['name'])
+            ->with($this->alertSuccess("Successfully updated {$table['name']} table"));
     }
 
     protected function prepareDbManager($action, $table = '')
@@ -254,6 +254,7 @@ class VoyagerDatabaseController extends Controller
             'model_name'           => $modelNamespace.Str::studly(Str::singular($table)),
             'generate_permissions' => true,
             'server_side'          => false,
+            'seo_active'          => false,
         ];
     }
 

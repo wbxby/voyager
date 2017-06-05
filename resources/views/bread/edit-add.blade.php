@@ -74,25 +74,27 @@
 
                         </div><!-- panel-body -->
 
-                        <div class="panel panel-bordered panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="icon wb-search"></i> SEO Контент</h3>
+                        @if($dataType->seo_active == 1)
+                            <div class="panel panel-bordered panel-info">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><i class="icon wb-search"></i> SEO Контент</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label for="name">SEO Description</label>
+                                        <textarea class="form-control" name="metaDescription">{{ $dataSeoDescription or ''}}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">SEO Keywords</label>
+                                        <textarea class="form-control" name="metaKeywords">{{ $dataSeoKeywords or ''}}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">SEO Title</label>
+                                        <input type="text" class="form-control" name="metaTitle" placeholder="SEO Title" value="{{ $dataSeoTitle or ''}}">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <label for="name">SEO Description</label>
-                                    <textarea class="form-control" name="metaDescription">{{ $dataSeoDescription or ''}}</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">SEO Keywords</label>
-                                    <textarea class="form-control" name="metaKeywords">{{ $dataSeoKeywords or ''}}</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">SEO Title</label>
-                                    <input type="text" class="form-control" name="metaTitle" placeholder="SEO Title" value="{{ $dataSeoTitle or ''}}">
-                                </div>
-                            </div>
-                        </div>
+                        @endif
 
                         <div class="panel-footer">
                             <button type="submit" class="btn btn-primary save">Сохранить</button>

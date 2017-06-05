@@ -21,11 +21,11 @@
 
                 <form action="@if(isset($dataType->id)){{ route('voyager.database.bread.update', $dataType->id) }}@else{{ route('voyager.database.bread.store') }}@endif"
                       method="POST" role="form">
-                @if(isset($dataType->id))
-                    <input type="hidden" value="{{ $dataType->id }}" name="id">
-                    {{ method_field("PUT") }}
-                @endif
-                    <!-- CSRF TOKEN -->
+                    @if(isset($dataType->id))
+                        <input type="hidden" value="{{ $dataType->id }}" name="id">
+                        {{ method_field("PUT") }}
+                    @endif
+                <!-- CSRF TOKEN -->
                     {{ csrf_field() }}
 
                     <div class="panel panel-primary panel-bordered">
@@ -93,29 +93,35 @@
                                 <div class="col-md-6 form-group">
                                     <label for="email">Model Name</label>
                                     <span class="glyphicon glyphicon-question-sign"
-                                        aria-hidden="true"
-                                        data-toggle="tooltip"
-                                        data-placement="right"
-                                        title="ex. \App\User, if left empty will try and use the table name"></span>
+                                          aria-hidden="true"
+                                          data-toggle="tooltip"
+                                          data-placement="right"
+                                          title="ex. \App\User, if left empty will try and use the table name"></span>
                                     <input type="text" class="form-control" name="model_name" placeholder="Model Class Name"
                                            value="@if(isset($dataType->model_name)){{ $dataType->model_name }}@else{{ $model_name }}@endif">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="email">Controller Name</label>
                                     <span class="glyphicon glyphicon-question-sign"
-                                        aria-hidden="true"
-                                        data-toggle="tooltip"
-                                        data-placement="right"
-                                        title="ex. PageController, if left empty will use the BREAD Controller"></span>
+                                          aria-hidden="true"
+                                          data-toggle="tooltip"
+                                          data-placement="right"
+                                          title="ex. PageController, if left empty will use the BREAD Controller"></span>
                                     <input type="text" class="form-control" name="controller" placeholder="Controller Name"
                                            value="@if(isset($dataType->controller)){{ $dataType->controller }}@endif">
                                 </div>
                             </div>
                             <div class="row clearfix">
-                                <div class="col-md-6 form-group">
+                                <div class="col-md-3 form-group">
                                     <label for="generate_permissions">Generate Permissions</label><br>
                                     <?php $checked = (isset($dataType->generate_permissions) && $dataType->generate_permissions == 1) ? true : (isset($generate_permissions) && $generate_permissions) ? true : false; ?>
                                     <input type="checkbox" name="generate_permissions" class="toggleswitch"
+                                           @if($checked) checked @endif>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    <label for="seo_active">Добавить Seo</label><br>
+                                    <?php $checked = (isset($dataType->seo_active) && $dataType->seo_active == 1) ? true : (isset($seo_active) && $seo_active) ? true : false; ?>
+                                    <input type="checkbox" name="seo_active" class="toggleswitch"
                                            @if($checked) checked @endif>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -129,7 +135,7 @@
                                 <label for="description">Description</label>
                                 <textarea class="form-control" name="description"
                                           placeholder="Description"
-                                    >@if(isset($dataType->description)){{ $dataType->description }}@endif</textarea>
+                                >@if(isset($dataType->description)){{ $dataType->description }}@endif</textarea>
                             </div>
                         </div><!-- .panel-body -->
                     </div><!-- .panel -->
@@ -149,95 +155,95 @@
                             </div>
 
                             <div id="bread-items">
-                            @php
-                                $r_order = 0;
-                            @endphp
-                            @foreach($fieldOptions as $data)
                                 @php
-                                    $r_order += 1;
+                                    $r_order = 0;
                                 @endphp
+                                @foreach($fieldOptions as $data)
+                                    @php
+                                        $r_order += 1;
+                                    @endphp
 
-                                @if(isset($dataType->id))
-                                    <?php $dataRow = TCG\Voyager\Models\DataRow::where('data_type_id', '=',
-                                            $dataType->id)->where('field', '=', $data['field'])->first(); ?>
-                                @endif
+                                    @if(isset($dataType->id))
+                                        <?php $dataRow = TCG\Voyager\Models\DataRow::where('data_type_id', '=',
+                                                $dataType->id)->where('field', '=', $data['field'])->first(); ?>
+                                    @endif
 
-                                <div class="row row-dd">
-                                    <div class="col-xs-2">
-                                        <h4><strong>{{ $data['field'] }}</strong></h4>
-                                        <strong>Type:</strong> <span>{{ $data['type'] }}</span><br/>
-                                        <strong>Key:</strong> <span>{{ $data['key'] }}</span><br/>
-                                        <strong>Required:</strong>
-                                        @if($data['null'] == "NO")
-                                            <span>Yes</span>
-                                            <input type="hidden" value="1" name="field_required_{{ $data['field'] }}"
-                                                   checked="checked">
-                                        @else
-                                            <span>No</span>
-                                            <input type="hidden" value="0" name="field_required_{{ $data['field'] }}">
-                                        @endif
-                                        <div class="handler glyphicon glyphicon-sort"></div>
-                                        <input class="row_order" type="hidden" value="{{ $r_order }}" name="field_order_{{ $data['field'] }}">
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <input type="checkbox"
-                                               id="field_browse_{{ $data['field'] }}"
-                                               name="field_browse_{{ $data['field'] }}"
-                                               @if(isset($dataRow->browse) && $dataRow->browse)
-                                                    {{ 'checked="checked"' }}
-                                               @elseif($data['key'] == 'PRI')
-                                               @elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')
-                                               @elseif(!isset($dataRow->browse))
-                                                    {{ 'checked="checked"' }}
-                                               @endif>
-                                        <label for="field_browse_{{ $data['field'] }}">Browse</label><br/>
-                                        <input type="checkbox"
-                                               id="field_read_{{ $data['field'] }}"
-                                               name="field_read_{{ $data['field'] }}" @if(isset($dataRow->read) && $dataRow->read){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->read)){{ 'checked="checked"' }}@endif>
-                                        <label for="field_read_{{ $data['field'] }}">Read</label><br/>
-                                        <input type="checkbox"
-                                               id="field_edit_{{ $data['field'] }}"
-                                               name="field_edit_{{ $data['field'] }}" @if(isset($dataRow->edit) && $dataRow->edit){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->edit)){{ 'checked="checked"' }}@endif>
-                                        <label for="field_edit_{{ $data['field'] }}">Edit</label><br/>
-                                        <input type="checkbox"
-                                               id="field_add_{{ $data['field'] }}"
-                                               name="field_add_{{ $data['field'] }}" @if(isset($dataRow->add) && $dataRow->add){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'created_at')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->add)){{ 'checked="checked"' }}@endif>
-                                            <label for="field_add_{{ $data['field'] }}">Add</label><br/>
-                                        <input type="checkbox"
-                                               id="field_delete_{{ $data['field'] }}"
-                                               name="field_delete_{{ $data['field'] }}" @if(isset($dataRow->delete) && $dataRow->delete){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->delete)){{ 'checked="checked"' }}@endif>
-                                                <label for="field_delete_{{ $data['field'] }}">Delete</label><br/>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <input type="hidden" name="field_{{ $data['field'] }}" value="{{ $data['field'] }}">
-                                        @if($data['type'] == 'timestamp')
-                                            <p>Timestamp</p>
-                                            <input type="hidden" value="timestamp"
-                                                   name="field_input_type_{{ $data['field'] }}">
-                                        @else
-                                            <select name="field_input_type_{{ $data['field'] }}">
-                                                @foreach (Voyager::formFields() as $formField)
-                                                    <option value="{{ $formField->getCodename() }}" @if(isset($dataRow->type) && $dataRow->type == $formField->getCodename()){{ 'selected' }}@endif>
-                                                        {{ $formField->getName() }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <input type="text" class="form-control"
-                                               value="@if(isset($dataRow->display_name)){{ $dataRow->display_name }}@else{{ ucwords(str_replace('_', ' ', $data['field'])) }}@endif"
-                                               name="field_display_name_{{ $data['field'] }}">
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <div class="alert alert-danger validation-error">
-                                            Invalid JSON
+                                    <div class="row row-dd">
+                                        <div class="col-xs-2">
+                                            <h4><strong>{{ $data['field'] }}</strong></h4>
+                                            <strong>Type:</strong> <span>{{ $data['type'] }}</span><br/>
+                                            <strong>Key:</strong> <span>{{ $data['key'] }}</span><br/>
+                                            <strong>Required:</strong>
+                                            @if($data['null'] == "NO")
+                                                <span>Yes</span>
+                                                <input type="hidden" value="1" name="field_required_{{ $data['field'] }}"
+                                                       checked="checked">
+                                            @else
+                                                <span>No</span>
+                                                <input type="hidden" value="0" name="field_required_{{ $data['field'] }}">
+                                            @endif
+                                            <div class="handler glyphicon glyphicon-sort"></div>
+                                            <input class="row_order" type="hidden" value="{{ $r_order }}" name="field_order_{{ $data['field'] }}">
                                         </div>
-                                        <textarea id="json-input-{{ $data['field'] }}" class="resizable-editor" data-editor="json" name="field_details_{{ $data['field'] }}">@if(isset($dataRow->details)){{ $dataRow->details }}@endif</textarea>
+                                        <div class="col-xs-2">
+                                            <input type="checkbox"
+                                                   id="field_browse_{{ $data['field'] }}"
+                                                   name="field_browse_{{ $data['field'] }}"
+                                            @if(isset($dataRow->browse) && $dataRow->browse)
+                                                {{ 'checked="checked"' }}
+                                                    @elseif($data['key'] == 'PRI')
+                                                    @elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')
+                                                    @elseif(!isset($dataRow->browse))
+                                                {{ 'checked="checked"' }}
+                                                    @endif>
+                                            <label for="field_browse_{{ $data['field'] }}">Browse</label><br/>
+                                            <input type="checkbox"
+                                                   id="field_read_{{ $data['field'] }}"
+                                                   name="field_read_{{ $data['field'] }}" @if(isset($dataRow->read) && $dataRow->read){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->read)){{ 'checked="checked"' }}@endif>
+                                            <label for="field_read_{{ $data['field'] }}">Read</label><br/>
+                                            <input type="checkbox"
+                                                   id="field_edit_{{ $data['field'] }}"
+                                                   name="field_edit_{{ $data['field'] }}" @if(isset($dataRow->edit) && $dataRow->edit){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->edit)){{ 'checked="checked"' }}@endif>
+                                            <label for="field_edit_{{ $data['field'] }}">Edit</label><br/>
+                                            <input type="checkbox"
+                                                   id="field_add_{{ $data['field'] }}"
+                                                   name="field_add_{{ $data['field'] }}" @if(isset($dataRow->add) && $dataRow->add){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'created_at')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->add)){{ 'checked="checked"' }}@endif>
+                                            <label for="field_add_{{ $data['field'] }}">Add</label><br/>
+                                            <input type="checkbox"
+                                                   id="field_delete_{{ $data['field'] }}"
+                                                   name="field_delete_{{ $data['field'] }}" @if(isset($dataRow->delete) && $dataRow->delete){{ 'checked="checked"' }}@elseif($data['key'] == 'PRI')@elseif($data['type'] == 'timestamp' && $data['field'] == 'updated_at')@elseif(!isset($dataRow->delete)){{ 'checked="checked"' }}@endif>
+                                            <label for="field_delete_{{ $data['field'] }}">Delete</label><br/>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input type="hidden" name="field_{{ $data['field'] }}" value="{{ $data['field'] }}">
+                                            @if($data['type'] == 'timestamp')
+                                                <p>Timestamp</p>
+                                                <input type="hidden" value="timestamp"
+                                                       name="field_input_type_{{ $data['field'] }}">
+                                            @else
+                                                <select name="field_input_type_{{ $data['field'] }}">
+                                                    @foreach (Voyager::formFields() as $formField)
+                                                        <option value="{{ $formField->getCodename() }}" @if(isset($dataRow->type) && $dataRow->type == $formField->getCodename()){{ 'selected' }}@endif>
+                                                            {{ $formField->getName() }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input type="text" class="form-control"
+                                                   value="@if(isset($dataRow->display_name)){{ $dataRow->display_name }}@else{{ ucwords(str_replace('_', ' ', $data['field'])) }}@endif"
+                                                   name="field_display_name_{{ $data['field'] }}">
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="alert alert-danger validation-error">
+                                                Invalid JSON
+                                            </div>
+                                            <textarea id="json-input-{{ $data['field'] }}" class="resizable-editor" data-editor="json" name="field_details_{{ $data['field'] }}">@if(isset($dataRow->details)){{ $dataRow->details }}@endif</textarea>
+                                        </div>
                                     </div>
-                                </div>
 
-                            @endforeach
+                                @endforeach
                             </div>
 
                             <div class="box-footer">
@@ -266,13 +272,13 @@
         validationAlerts.hide();
         $(function () {
             @if ($isModelTranslatable)
-                /**
-                 * Multilingual setup
-                 */
-                $('.side-body').multilingual({
-                    "form":    'form',
-                    "editing": true
-                });
+            /**
+             * Multilingual setup
+             */
+            $('.side-body').multilingual({
+                "form":    'form',
+                "editing": true
+            });
             @endif
 
             /**
@@ -281,7 +287,7 @@
             $('#bread-items').sortable({
                 update: function (e, ui) {
                     var _rows = $('#bread-items').find('.row_order'),
-                        _size = _rows.length;
+                            _size = _rows.length;
 
                     for (var i = 0; i < _size; i++) {
                         $(_rows[i]).val(i+1);
@@ -294,16 +300,16 @@
 
             $('textarea[data-editor]').each(function () {
                 var textarea = $(this),
-                mode = textarea.data('editor'),
-                editDiv = $('<div>', {
-                    position: 'absolute',
-                    width: 250,
-                    resize: 'vertical',
-                    class: textarea.attr('class')
-                }).insertBefore(textarea),
-                editor = ace.edit(editDiv[0]),
-                _session = editor.getSession(),
-                valid = false;
+                        mode = textarea.data('editor'),
+                        editDiv = $('<div>', {
+                            position: 'absolute',
+                            width: 250,
+                            resize: 'vertical',
+                            class: textarea.attr('class')
+                        }).insertBefore(textarea),
+                        editor = ace.edit(editDiv[0]),
+                        _session = editor.getSession(),
+                        valid = false;
                 textarea.hide();
 
                 // Validate JSON
@@ -316,7 +322,7 @@
                     } else {
                         for(var i = window.invalidEditors.length - 1; i >= 0; i--) {
                             if(window.invalidEditors[i] == textarea.attr('id')) {
-                               window.invalidEditors.splice(i, 1);
+                                window.invalidEditors.splice(i, 1);
                             }
                         }
                     }
