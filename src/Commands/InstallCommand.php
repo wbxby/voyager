@@ -67,6 +67,24 @@ class InstallCommand extends Command
         $this->info('Migrating the database tables into your application');
         $this->call('migrate');
 
+        // Seo Creation
+        $seoClass = <<<EOT
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Seo extends Model
+{
+    //
+}
+EOT;
+        $fp = fopen("./App/Seo.php", "w");
+        fwrite($fp, $seoClass);
+        fclose($fp);
+        ///////
+
         $this->info('Dumping the autoloaded files and reloading all new files');
 
         $composer = $this->findComposer();
