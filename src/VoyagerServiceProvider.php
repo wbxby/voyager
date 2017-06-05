@@ -237,6 +237,7 @@ class VoyagerServiceProvider extends ServiceProvider
     protected function registerFormFields()
     {
         $formFields = [
+            'text',
             'checkbox',
             'date',
             'file',
@@ -248,7 +249,6 @@ class VoyagerServiceProvider extends ServiceProvider
             'rich_text_box',
             'select_dropdown',
             'select_multiple',
-            'text',
             'text_area',
             'timestamp',
             'hidden',
