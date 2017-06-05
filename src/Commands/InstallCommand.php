@@ -68,6 +68,7 @@ class InstallCommand extends Command
         $this->call('migrate');
 
         // Seo Creation
+        $tableSeo = '$table';
         $seoClass = <<<EOT
 <?php
 
@@ -77,7 +78,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Seo extends Model
 {
-    //
+    protected $tableSeo = 'seo';
 }
 EOT;
         $fp = fopen("./App/Seo.php", "w");
