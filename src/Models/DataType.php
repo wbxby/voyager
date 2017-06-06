@@ -27,6 +27,7 @@ class DataType extends Model
         'description',
         'generate_permissions',
         'server_side',
+        'seo_active',
     ];
 
     public function rows()
@@ -67,6 +68,11 @@ class DataType extends Model
     public function setServerSideAttribute($value)
     {
         $this->attributes['server_side'] = $value ? 1 : 0;
+    }
+
+    public function setSeoActiveAttribute($value)
+    {
+        $this->attributes['seo_active'] = $value ? 1 : 0;
     }
 
     public function updateDataType($requestData, $throw = false)
