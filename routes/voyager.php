@@ -79,6 +79,14 @@ Route::group(['as' => 'voyager.'], function () {
             Route::get('{id}/delete_value', ['uses' => $namespacePrefix.'VoyagerSettingsController@delete_value', 'as' => 'delete_value']);
         });
 
+        // Deleting single image
+        Route::group([
+            'as'     => 'images.',
+            'prefix' => 'images',
+        ], function () use ($namespacePrefix) {
+            Route::get('{id}/{db}/{field}/deleteImage', ['uses' => $namespacePrefix.'VoyagerBreadController@deleteImage', 'as' => 'deleteImage']);
+        });
+
         // Admin Media
         Route::group([
             'as'     => 'media.',

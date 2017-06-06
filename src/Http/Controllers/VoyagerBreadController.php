@@ -363,4 +363,19 @@ class VoyagerBreadController extends Controller
 
         return redirect()->route("voyager.{$dataType->slug}.index")->with($data);
     }
+
+    public function deleteImage(Request $request, $id, $db, $field)
+    {
+        $data = DB::table($db)->where('id', $id)->update([$field => ''])
+            ? [
+                'message'    => "Успешно удалено",
+                'alert-type' => 'success',
+            ]
+            : [
+                'message'    => "Возникли проблемы",
+                'alert-type' => 'error',
+            ];
+
+        return redirect()->back()->with($data);
+    }
 }
