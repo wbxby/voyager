@@ -86,7 +86,7 @@ class DataType extends Model
                 foreach ($fields as $field) {
                     $dataRow = $this->rows()->firstOrNew(['field' => $field]);
 
-                    foreach (['browse', 'read', 'edit', 'add', 'delete'] as $check) {
+                    foreach (['browse', 'read', 'edit', 'add', 'delete', 'filter'] as $check) {
                         $dataRow->{$check} = isset($requestData["field_{$check}_{$field}"]);
                     }
 
