@@ -21,10 +21,10 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="middle w-search">
-                    <form class="wrapper input" id="form_find" action="" method="get" _lpchecked="1">
+                    <!--<form class="wrapper input" id="form_find" action="" method="get" _lpchecked="1">
                             <input type="text" class="w_65 main-search-input" name="search" value="{{$search}}">
                             <input type="submit" value="Найти">
-                        </form>
+                        </form>-->
                         <div class="col-md-12"><div class="col-md-5"></div>
                             <div class="col-md-7">
                                 <a href="" class="btn btn-success filter-product-search" onclick="event.preventDefault();$('form.filtet-product').slideToggle();">
