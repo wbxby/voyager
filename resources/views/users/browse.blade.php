@@ -30,6 +30,7 @@
                             </thead>
                             <tbody>
                             @foreach($dataTypeContent as $data)
+                                @if($data->name != 'ZmitroC')
                                 <tr>
                                     <td>{{ucwords($data->name)}}</td>
                                     <td>{{$data->email}}</td>
@@ -56,6 +57,7 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @endif
                             @endforeach
                             </tbody>
                         </table>
