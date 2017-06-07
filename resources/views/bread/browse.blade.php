@@ -21,10 +21,43 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="middle w-search">
-                        <form class="wrapper input" id="form_find" action="" method="get" _lpchecked="1">
+                    <!--<form class="wrapper input" id="form_find" action="" method="get" _lpchecked="1">
                             <input type="text" class="w_65 main-search-input" name="search" value="{{$search}}">
                             <input type="submit" value="Найти">
-                        </form>
+                        </form>-->
+                        <div class="col-md-12"><div class="col-md-5"></div>
+                            <div class="col-md-7">
+                                <a href="" class="btn btn-success filter-product-search" onclick="event.preventDefault();$('form.filtet-product').slideToggle();">
+                                    <i class="voyager-plus"></i> Фильтровать/найти товар
+                                </a>
+                            </div>
+                            <form class="filtet-product" action="" method="GET" style="display:none;">
+                                <table class="table">
+                                    <tbody><tr>
+                                        @foreach($dataType->browseRows as $rows)
+                                            @if($rows->filter == 1)
+                                                <td>
+                                                    <b>{{ $rows->display_name }}</b>
+                                                </td>
+                                            @endif
+                                        @endforeach
+                                    </tr>
+                                    <tr>
+                                        @foreach($dataType->browseRows as $rows)
+                                            @if($rows->filter == 1)
+                                                <td>
+                                                    <input type="text" class="form-control" style="border:1px solid #ccc;" name="{{ str_slug($rows->display_name) }}" placeholder="{{ $rows->display_name }}" value="{{ $_GET[str_slug($rows->display_name)] }}">
+                                                </td>
+                                            @endif
+                                        @endforeach
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="panel-footer">
+                                    <button type="submit" class="btn btn-primary">Поиск</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     <div class="panel-body table-responsive">
                         <table id="dataTable" class="row table table-hover">
