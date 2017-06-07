@@ -13,6 +13,8 @@ use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
 use TCG\Voyager\Traits\AlertsMessages;
 use Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 abstract class Controller extends BaseController
 {
@@ -99,6 +101,12 @@ abstract class Controller extends BaseController
         foreach ($multi_select as $sync_data) {
             $data->{$sync_data['row']}()->sync($sync_data['content']);
         }
+
+        DB::table('logs')->insert(
+            ['user_id' => Auth::id(), 'user_name' => Auth::user()->name, 'action' => explode('.', $request->route()->getAction()['as'])[2],
+                'table_name' => explode('.', $request->route()->getAction()['as'])[1], 'row_id' => $data->id, 'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')]
+        );
 
         return $data;
     }

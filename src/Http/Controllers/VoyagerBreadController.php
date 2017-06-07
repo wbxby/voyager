@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
+use Illuminate\Support\Facades\Auth;
 
 class VoyagerBreadController extends Controller
 {
@@ -360,6 +361,12 @@ class VoyagerBreadController extends Controller
             ];
 
         DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->delete();
+
+        DB::table('logs')->insert(
+            ['user_id' => Auth::id(), 'user_name' => Auth::user()->name, 'action' => 'destroy',
+                'table_name' => $dataType->name, 'row_id' => $id, 'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')]
+        );
 
         return redirect()->route("voyager.{$dataType->slug}.index")->with($data);
     }
