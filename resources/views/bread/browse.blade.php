@@ -46,7 +46,7 @@
                                         @foreach($dataType->browseRows as $rows)
                                             @if($rows->filter == 1)
                                                 <td>
-                                                    <input type="text" class="form-control" style="border:1px solid #ccc;" name="{{ str_slug($rows->display_name) }}" placeholder="{{ $rows->display_name }}" value="{{ $_GET[str_slug($rows->display_name)] }}">
+                                                    <input type="text" class="form-control" style="border:1px solid #ccc;" name="{{ str_slug($rows->display_name) }}" placeholder="{{ $rows->display_name }}" @if(isset($_GET[str_slug($rows->display_name)])) value="{{ $_GET[str_slug($rows->display_name)] }}" @else value="" @endif>
                                                 </td>
                                             @endif
                                         @endforeach
