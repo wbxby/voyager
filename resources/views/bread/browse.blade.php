@@ -31,7 +31,7 @@
                                     <i class="voyager-plus"></i> Фильтровать/найти товар
                                 </a>
                             </div>
-                            <form class="filtet-product" action="" method="GET" style="display:none;">
+                            <form class="filtet-product" action="" method="GET">
                                 <table class="table">
                                     <tbody><tr>
                                         @foreach($dataType->browseRows as $rows)
@@ -75,7 +75,7 @@
                                     @foreach($dataType->browseRows as $rows)
                                     <th>{{ $rows->display_name }}</th>
                                     @endforeach
-                                    <th class="actions">Действия</th>
+                                    <th class="actions" style="width: 19%">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,7 +142,7 @@
                                             @endif
                                         </td>
                                     @endforeach
-                                    <td class="no-sort no-click" id="bread-actions">
+                                    <td class="no-sort no-click" id="bread-actions" style="width: 19%">
                                         @if (Voyager::can('delete_'.$dataType->name))
                                             <a href="javascript:;" title="Delete" class="btn btn-sm btn-danger pull-right delete" data-id="{{ $data->id }}" id="delete-{{ $data->id }}">
                                                 <i class="voyager-trash"></i> <span class="hidden-xs hidden-sm">Удалить</span>

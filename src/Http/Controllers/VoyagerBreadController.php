@@ -47,7 +47,11 @@ class VoyagerBreadController extends Controller
             if($_GET){
                 foreach ($dataType->browseRows as $bRow){
                     if(isset($_GET[$bRow->field])){
-                        $dataModel->where($bRow->field, 'like', '%'.$_GET[$bRow->field].'%');
+                        if(isset($_GET['sortby'])){
+                            $dataModel->where($bRow->field, 'like', '%'.$_GET[$bRow->field].'%')->orderBy($_GET['sortby'], 'DESC');
+                        } else{
+                            $dataModel->where($bRow->field, 'like', '%'.$_GET[$bRow->field].'%');
+                        }
                     }
                 }
             }
