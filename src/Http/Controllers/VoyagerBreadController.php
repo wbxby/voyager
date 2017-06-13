@@ -44,11 +44,10 @@ class VoyagerBreadController extends Controller
             $relationships = $this->getRelationships($dataType);
 
             $dataModel = $model->with($relationships);
-            if($request->search){
-                $search =$request->search;
+            if($_GET){
                 foreach ($dataType->browseRows as $bRow){
-                    if($bRow->type != 'timestamp'){
-                        $dataModel->orWhere($bRow->field, 'like', '%'.$request->search.'%');
+                    if(isset($_GET[$bRow->field])){
+                        $dataModel->where($bRow->field, 'like', '%'.$_GET[$bRow->field].'%');
                     }
                 }
             }

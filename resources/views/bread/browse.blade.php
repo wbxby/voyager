@@ -46,7 +46,16 @@
                                         @foreach($dataType->browseRows as $rows)
                                             @if($rows->filter == 1)
                                                 <td>
-                                                    <input type="text" class="form-control" style="border:1px solid #ccc;" name="{{ str_slug($rows->display_name) }}" placeholder="{{ $rows->display_name }}" @if(isset($_GET[str_slug($rows->display_name)])) value="{{ $_GET[str_slug($rows->display_name)] }}" @else value="" @endif>
+                                                    @if($rows->field == 'is_active')
+                                                        <select name="{{ $rows->field }}" class="form-control" style="border:1px solid #ccc;" @if(isset($_GET[$rows->field])) value="{{ $_GET[$rows->field] }}" @else value="" @endif>
+                                                            <option value="">Статус</option>
+                                                            <option value="1" @if(isset($_GET[$rows->field])) {{ $_GET[$rows->field] == 1 ? 'selected' : '' }}  @endif>Активен</option>
+                                                            <option value="0" @if(isset($_GET[$rows->field])) {{ $_GET[$rows->field] == 0 ? 'selected' : '' }}  @endif>Неактивен</option>
+                                                        </select>
+                                                    @else
+                                                        <input @if($rows->type == 'timestamp') type="date" @else type="text" @endif
+                                                        class="form-control" style="border:1px solid #ccc;" name="{{ $rows->field }}" placeholder="{{ $rows->display_name }}" @if(isset($_GET[$rows->field])) value="{{ $_GET[$rows->field] }}" @else value="" @endif>
+                                                    @endif
                                                 </td>
                                             @endif
                                         @endforeach
