@@ -196,7 +196,7 @@ class VoyagerBreadController extends Controller
 
             $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
 
-            $seoRecord = DB::table('seo')->where('table', '=', $dataType->name)->where('item_id', '=', $id)->first();
+            $seoRecord = DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->first();
             if (!$seoRecord){
                 DB::table('seo')->insert(
                     ['table' => $dataType->name,
@@ -206,7 +206,7 @@ class VoyagerBreadController extends Controller
                         'keywords' => $request->metaKeywords]
                 );
             } else {
-                DB::table('seo')->where('item_id', '=', $id)->update(
+                DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->update(
                     ['table' => $dataType->name,
                         'item_id' => $id,
                         'title' => $request->metaTitle,
