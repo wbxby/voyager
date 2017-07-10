@@ -198,13 +198,15 @@ class VoyagerBreadController extends Controller
 
             $seoRecord = DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->first();
             if (!$seoRecord){
-                DB::table('seo')->insert(
-                    ['table' => $dataType->name,
-                        'item_id' => $id,
-                        'title' => $request->metaTitle,
-                        'description' => $request->metaDescription,
-                        'keywords' => $request->metaKeywords]
-                );
+                if(isset($request->metaTitle) || isset($request->metaDescription) || isset($request->metaKeywords)){
+                    DB::table('seo')->insert(
+                        ['table' => $dataType->name,
+                            'item_id' => $id,
+                            'title' => $request->metaTitle,
+                            'description' => $request->metaDescription,
+                            'keywords' => $request->metaKeywords]
+                    );
+                }
             } else {
                 DB::table('seo')->where('table', $dataType->name)->where('item_id', $id)->update(
                     ['table' => $dataType->name,
@@ -287,13 +289,15 @@ class VoyagerBreadController extends Controller
 
             $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
 
-            DB::table('seo')->insert(
-                ['table' => $dataType->name,
-                    'item_id' => $data->id,
-                    'title' => $request->metaTitle,
-                    'description' => $request->metaDescription,
-                    'keywords' => $request->metaKeywords]
-            );
+            if(isset($request->metaTitle) || isset($request->metaDescription) || isset($request->metaKeywords)){
+                DB::table('seo')->insert(
+                    ['table' => $dataType->name,
+                        'item_id' => $data->id,
+                        'title' => $request->metaTitle,
+                        'description' => $request->metaDescription,
+                        'keywords' => $request->metaKeywords]
+                );
+            }
 
             return redirect()
                 ->route("voyager.{$dataType->slug}.edit", ['id' => $data->id])
